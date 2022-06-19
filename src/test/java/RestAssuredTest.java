@@ -1,3 +1,5 @@
+import io.restassured.RestAssured;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -6,6 +8,11 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class RestAssuredTest {
+
+    @BeforeAll
+    static void settings() {
+        RestAssured.baseURI = "https://reqres.in/api";
+    }
 
     @Test
     void successfulLogin() {
@@ -16,7 +23,7 @@ public class RestAssuredTest {
                 .body(authorizeData)
                 .contentType(JSON)
                 .when()
-                .post("https://reqres.in/api/login")
+                .post("/login")
                 .then()
                 .statusCode(200)
                 .body("token", is(notNullValue()));
@@ -30,7 +37,7 @@ public class RestAssuredTest {
                 .body(authorizedData)
                 .contentType(JSON)
                 .when()
-                .post("https://reqres.in/api/login")
+                .post("/login")
                 .then()
                 .statusCode(400)
                 .body("error", is("Missing password"));
@@ -41,7 +48,7 @@ public class RestAssuredTest {
 
         given()
                 .when()
-                .get("https://reqres.in/api/unknown/23")
+                .get("/unknown/23")
                 .then()
                 .statusCode(404);
     }
@@ -50,7 +57,7 @@ public class RestAssuredTest {
     void getSingleUser() {
         given()
                 .when()
-                .get("https://reqres.in/api/users/2")
+                .get("/users/2")
                 .then()
                 .statusCode(200)
                 .body("data", is(notNullValue()));
@@ -60,7 +67,7 @@ public class RestAssuredTest {
     void deleteUser() {
         given()
                 .when()
-                .delete("https://reqres.in/api/users/2")
+                .delete("/users/2")
                 .then()
                 .statusCode(204);
     }
@@ -69,7 +76,7 @@ public class RestAssuredTest {
     void singleUserNotFound() {
         given()
                 .when()
-                .get("https://reqres.in/api/users/23")
+                .get("/users/23")
                 .then()
                 .statusCode(404);
     }
